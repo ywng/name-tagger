@@ -110,7 +110,7 @@ Then, I also include the word vector clustering group as a feature. Initially, w
 Later on, I realised that the last bit of push for training accuracy (from 99.1 --> 99.8) with more epoches (19 epoches) help with the performance. Now the accuracy and F1 score is much improved.
 
 ***
-FEAT_EXTRACT_LIST = [
+**FEAT_EXTRACT_LIST = [
   "is_title",
   "orth_",
   "lemma_",
@@ -118,16 +118,16 @@ FEAT_EXTRACT_LIST = [
   "shape_",
   "suffix_",
   "word_vector_cluster",
-]
+]**
 
 50212 out of 51578 tags correct  
-  accuracy: 97.35  
+  **accuracy: 97.35**  
 5917 groups in key  
 5729 groups in response  
 4870 correct groups  
   precision: 85.01  
   recall:    82.31  
-  F1:        83.63  
+  **F1:        83.63**  
 
 Now, I try to change the total number of word vector embbedings group (K = 1024), and further increased the number of epoches (25 epoches), and just take backward 2, forward 1 neighboring word as contextual features, the performance is pushed higher a bit. F1 score increase is not trivial. Probably, the hyper-parameters (K, number of epoches, how many forward and backward neighboring words we consider) are also important.
 
@@ -135,6 +135,10 @@ Now, I try to change the total number of word vector embbedings group (K = 1024)
 ## Setup and Libraries
 I use [spaCy](https://spacy.io/) python library to help extracting text features. It support convenient features extraction about text e.g. is_upper, prefix, suffix, shape of the word, is_stop, lemma (the canonical form) of a word etc.
 ```
+module load python-3.6
+virtualenv --system-site-packages py3.6.3
+source py3.6.3/bin/activate
+
 pip install spacy
 pip install pandas
 ```
@@ -149,7 +153,7 @@ Run the Python interpreter and type the commands:
 Select download corpus package.
 ```
 import nltk
-nltk.download()
+nltk.download('treebank')
 ```
 
 ## How to run
