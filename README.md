@@ -7,6 +7,8 @@ The training model using NLTK MaxentClassifier is essentially feature-based supe
 3. External source to help: these days, word embedding is a common and helpful representation about text. We can group similar words together using word embedding. If we know a certain word's group, it might help with the classification as word embedding group gives word meaning.
 
 Below are some of the features I tried of the above 3 main categories.  
+
+***
 FEAT_EXTRACT_LIST = [
   "is_title",
   "orth_",
@@ -35,8 +37,7 @@ FEAT_EXTRACT_LIST = [
   recall:    54.83   
   F1:        66.06   
 
-In this case, I tried to include as many word characteristics as possible and together with the context(-2, +2) combination of them.
-It gives okay accuracy, but the F1 score is low. This shows that too much unnecessary features may worsen the performance.
+In this case, I tried to include as many word characteristics as possible and together with the contextual(-2, +2) combination of them. It gives okay accuracy, but the F1 score is low. This shows that too much unnecessary features may worsen the performance.
 
 ***
 FEAT_EXTRACT_LIST = [
@@ -59,7 +60,7 @@ FEAT_EXTRACT_LIST = [
   recall:    69.90   
   F1:        76.74   
 
-Now, I have less word characteristics features, the performance is increased.
+Now, I have less word characteristics features, the performance is however increased.
 
 ***
 FEAT_EXTRACT_LIST = [
@@ -72,16 +73,16 @@ FEAT_EXTRACT_LIST = [
   "left_edge",
 ]
 
-49293 out of 51578 tags correct
-  accuracy: 95.57
-5917 groups in key
-4816 groups in response
-4100 correct groups
-  precision: 85.13
-  recall:    69.29
-  F1:        76.40
+49293 out of 51578 tags correct  
+  accuracy: 95.57  
+5917 groups in key  
+4816 groups in response  
+4100 correct groups  
+  precision: 85.13  
+  recall:    69.29  
+  F1:        76.40  
 
-Switch a little bit to different word characterirstics, the performance is more or less the same. Probably, the lemma, shape of the word, and its contextual features play the important role.
+Switch a little bit to different word characteristics, the performance is more or less the same. Probably, the lemma, shape of the word, and its contextual features play the important role. Some features are just not helpful at all.
 
 ***
 FEAT_EXTRACT_LIST = [
@@ -96,14 +97,14 @@ FEAT_EXTRACT_LIST = [
   "word_vector_cluster",
 ]
 
-50043 out of 51578 tags correct
-  accuracy: 97.02
-5917 groups in key
-5493 groups in response
-4717 correct groups
-  precision: 85.87
-  recall:    79.72
-  F1:        82.68
+50043 out of 51578 tags correct  
+  accuracy: 97.02  
+5917 groups in key  
+5493 groups in response  
+4717 correct groups  
+  precision: 85.87  
+  recall:    79.72  
+  F1:        82.68  
 
 Then, I also include the word vector clustering group as a feature. Initially, with the same number of epoches of training (9 epoches), I just got slightly, negligibly improvement over the accuracy and F1 score.
 Later on, I realised that the last bit of push for training accuracy (from 99.1 --> 99.8) with more epoches (19 epoches) help with the performance. Now the accuracy and F1 score is much improved.
@@ -119,16 +120,16 @@ FEAT_EXTRACT_LIST = [
   "word_vector_cluster",
 ]
 
-50212 out of 51578 tags correct
-  accuracy: 97.35
-5917 groups in key
-5729 groups in response
-4870 correct groups
-  precision: 85.01
-  recall:    82.31
-  F1:        83.63
+50212 out of 51578 tags correct  
+  accuracy: 97.35  
+5917 groups in key  
+5729 groups in response  
+4870 correct groups  
+  precision: 85.01  
+  recall:    82.31  
+  F1:        83.63  
 
-Now, I try to change the total number of word vector embbedings group (K = 1024), and further increased the number of epoches (25 epoches), and just take backward 2, forward 1 neighboring word as contextual features, the performance is pushed higher a bit. F1 score increase is not trivial. Probably, the hyper-parameters (K, number of epoches, how many forward and backward neighboring words we consider) is also important.
+Now, I try to change the total number of word vector embbedings group (K = 1024), and further increased the number of epoches (25 epoches), and just take backward 2, forward 1 neighboring word as contextual features, the performance is pushed higher a bit. F1 score increase is not trivial. Probably, the hyper-parameters (K, number of epoches, how many forward and backward neighboring words we consider) are also important.
 
 
 ## Setup and Libraries
@@ -160,6 +161,7 @@ ssh crunchy1.cims.nyu.edu
 
 ### Training
 It will produce a model object in ./model/
+It will take quite long to train up to 25 epoches. The best train model saved in ./model/model_2019-04-03_19-28-43.sav
 ```
 python max-entropy-name-tagger.py --train --train_data ./data/CONLL_train.pos-chunk-name
 ```

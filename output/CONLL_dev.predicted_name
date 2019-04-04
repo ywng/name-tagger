@@ -5093,7 +5093,7 @@ BAILEY	O
 IN	O
 FRONT	O
 OF	O
-FORMER	I-MISC
+FORMER	O
 CHAMPIONS	O
 .	O
 
@@ -8419,7 +8419,7 @@ Bureau	I-ORG
 -DOCSTART-	O
 
 Jones	I-PER
-Medical	O
+Medical	I-ORG
 completes	O
 acquisition	O
 .	O
@@ -10682,7 +10682,7 @@ Briton	I-MISC
 who	O
 lost	O
 his	O
-World	O
+World	I-MISC
 Boxing	I-ORG
 Council	I-PER
 (	O
@@ -10998,7 +10998,7 @@ Keith	I-PER
 O'Neill	I-PER
 of	O
 Norwich	I-ORG
-City	I-LOC
+City	I-ORG
 joins	O
 Niall	I-PER
 Quinn	I-PER
@@ -11320,7 +11320,7 @@ Chad	I-LOC
 has	O
 closed	O
 N'Djamena	O
-University	I-ORG
+University	O
 after	O
 two	O
 days	O
@@ -22257,7 +22257,7 @@ A	O
 
 Business	O
 :	O
-Company	I-LOC
+Company	O
 's	O
 goal	O
 is	O
@@ -27064,7 +27064,7 @@ from	O
 the	O
 Guangdong	I-ORG
 Post	I-ORG
-and	I-ORG
+and	O
 Telecommunications	I-ORG
 Administration	I-ORG
 (	O
@@ -35045,7 +35045,7 @@ five	O
 metres	O
 from	O
 the	O
-All	O
+All	I-MISC
 Black	I-ORG
 line	O
 set	O
@@ -43536,7 +43536,7 @@ pass	O
 his	O
 Trades	O
 Disputes	I-MISC
-Act	I-MISC
+Act	O
 which	O
 gave	O
 labour	O
@@ -54311,7 +54311,7 @@ Saturday	O
 at	O
 the	O
 Venice	I-ORG
-Film	I-ORG
+Film	O
 Festival	I-LOC
 .	O
 

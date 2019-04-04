@@ -8513,7 +8513,7 @@ half-time	O
 full-time	O
 
 5-2	O
-Real	I-ORG
+Real	O
 Madrid	I-ORG
 Real	I-ORG
 Madrid	I-ORG
@@ -12680,7 +12680,7 @@ leading	O
 brand	O
 ,	O
 Zywiec	I-PER
-Full	I-PER
+Full	O
 Light	I-PER
 ,	O
 which	O
@@ -13016,7 +13016,7 @@ LONDON	I-LOC
 
 The	O
 UK	I-ORG
-Department	O
+Department	I-ORG
 of	I-ORG
 Transport	I-ORG
 on	O
@@ -14712,7 +14712,7 @@ contract	O
 LONDON	I-LOC
 1996-12-06	O
 
-Information	I-ORG
+Information	O
 technology	O
 firm	O
 Electronic	I-ORG
@@ -15263,7 +15263,7 @@ Gras	I-PER
 
 -DOCSTART-	O
 
-New	I-ORG
+New	I-LOC
 York	I-LOC
 timecharter	O
 fixtures	O
@@ -15286,7 +15286,7 @@ York	I-LOC
 .	O
 
 --	O
-New	I-ORG
+New	I-LOC
 York	I-ORG
 Commodities	I-ORG
 Desk	I-ORG
@@ -15297,7 +15297,7 @@ Desk	I-ORG
 
 -DOCSTART-	O
 
-New	I-ORG
+New	I-LOC
 York	I-LOC
 coal	O
 /	O
@@ -15335,7 +15335,7 @@ Steel	I-ORG
 .	O
 
 --	O
-New	I-ORG
+New	I-LOC
 York	I-ORG
 Commodities	I-ORG
 Desk	I-ORG
@@ -15378,7 +15378,7 @@ Mobil	I-LOC
 .	O
 
 --	O
-New	I-ORG
+New	I-LOC
 York	I-ORG
 Commodities	I-ORG
 Desk	I-ORG
@@ -15457,7 +15457,7 @@ Exxon	I-ORG
 .	O
 
 --	O
-New	I-ORG
+New	I-LOC
 York	I-ORG
 Commodities	I-ORG
 Desk	I-ORG
@@ -15483,7 +15483,7 @@ NEW	I-LOC
 YORK	I-LOC
 1996-12-06	O
 
-New	I-ORG
+New	I-LOC
 York	I-LOC
 City	I-LOC
 on	O
@@ -23895,7 +23895,7 @@ International	I-ORG
 Confederation	I-ORG
 of	I-ORG
 Free	I-ORG
-Trade	O
+Trade	I-ORG
 Unions	I-ORG
 (	O
 ICFTU	I-LOC
@@ -26389,7 +26389,7 @@ his	O
 body	O
 ,	O
 said	O
-Department	O
+Department	I-ORG
 of	O
 Corrections	I-ORG
 spokesman	O
@@ -26587,7 +26587,7 @@ Thursday	O
 ,	O
 the	O
 11th	O
-Circuit	I-ORG
+Circuit	O
 U.S.	I-ORG
 Court	I-ORG
 of	I-ORG
@@ -26676,7 +26676,7 @@ sentence	O
 
 -DOCSTART-	O
 
-New	I-ORG
+New	I-LOC
 York	I-LOC
 grain	O
 freight	O
@@ -26707,7 +26707,7 @@ GeePee	O
 .	O
 
 --	O
-New	I-ORG
+New	I-LOC
 York	I-ORG
 Commodities	I-ORG
 Desk	I-ORG
@@ -36147,7 +36147,7 @@ investigation	O
 A	O
 spokesman	O
 for	O
-Foreign	O
+Foreign	I-ORG
 Affairs	O
 Minister	O
 Alexander	I-PER
@@ -37383,7 +37383,7 @@ $	O
 million	O
 by	O
 Hyundai	I-ORG
-Heavy	I-ORG
+Heavy	O
 pushed	O
 the	O
 dollar	O
@@ -38534,7 +38534,7 @@ campaign	O
 to	O
 host	O
 the	O
-World	I-ORG
+World	I-MISC
 Trade	I-ORG
 Organisation	I-ORG
 (	O
@@ -43424,7 +43424,7 @@ in	O
 jeopardy	O
 .	O
 
-Rules	I-MISC
+Rules	O
 call	O
 for	O
 at	O
@@ -44325,7 +44325,7 @@ contract	O
 to	O
 play	O
 for	O
-New	I-ORG
+New	O
 South	I-LOC
 Wales	I-LOC
 in	O
@@ -48701,7 +48701,7 @@ DETROIT	I-ORG
 Cleveland	I-ORG
 81	O
 
-New	I-ORG
+New	I-LOC
 York	I-ORG
 103	O
 MIAMI	O
@@ -49480,7 +49480,7 @@ OLD	O
 FIRM	O
 GAME	O
 FOR	O
-REAL	I-ORG
+REAL	O
 .	O
 
 MADRID	I-LOC
