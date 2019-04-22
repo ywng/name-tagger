@@ -22,14 +22,14 @@ FEAT_EXTRACT_LIST = [
   "suffix_",
 ]
 
-50212 out of 51578 tags correct
-accuracy: 97.35
-5917 groups in key
-5729 groups in response
-4870 correct groups
-precision: 85.01
-recall: 82.31
-F1: 83.63
+50212 out of 51578 tags correct  
+accuracy: 97.35  
+5917 groups in key  
+5729 groups in response  
+4870 correct groups  
+precision: 85.01  
+recall: 82.31  
+F1: 83.63  
 
 ***
 With naive word embeddings by adding D (where D is the dimensions of the word vector) features to each token, the performance is decreased.
@@ -46,17 +46,17 @@ FEAT_EXTRACT_LIST = [
   "word_vector_naive",
 ]
 
-49961 out of 51578 tags correct
-  accuracy: 96.86
-5917 groups in key
-6432 groups in response
-5039 correct groups
-  precision: 78.34
-  recall:    85.16
-  F1:        81.61
+49961 out of 51578 tags correct  
+  accuracy: 96.86  
+5917 groups in key  
+6432 groups in response  
+5039 correct groups  
+  precision: 78.34  
+  recall:    85.16  
+  F1:        81.61  
 
 ***
-With binarization (convert to discrete valued-features) as described in (Gu et al 2014), the performance is not improved but decreased. It is probably because the trainer is not good at handling these features, and taking each dim of the vector as a feature is too much.
+With binarization (convert to discrete valued-features) as described in (Gu et al 2014), the performance is not improved but decreased. It is probably because the trainer is not good at handling these features, and taking each dim of the vector as a feature is too much.  
 
 FEAT_EXTRACT_LIST = [
   "is_title",
@@ -71,14 +71,14 @@ FEAT_EXTRACT_LIST = [
   "binarization",
 ]
 
-48609 out of 51578 tags correct
-  accuracy: 94.24
-5917 groups in key
-7485 groups in response
-4804 correct groups
-  precision: 64.18
-  recall:    81.19
-  F1:        71.69
+48609 out of 51578 tags correct  
+  accuracy: 94.24  
+5917 groups in key  
+7485 groups in response  
+4804 correct groups  
+  precision: 64.18  
+  recall:    81.19  
+  F1:        71.69  
 
 ***
 Using word vector clustering, I got the best performance on dev dataset. 
@@ -98,14 +98,14 @@ FEAT_EXTRACT_LIST = [
 ]
 
 
-50570 out of 51578 tags correct
-  accuracy: **98.05**
-5917 groups in key
-5997 groups in response
-5195 correct groups
-  precision: 86.63
-  recall:    87.80
-  F1:        **87.21**
+50570 out of 51578 tags correct  
+  accuracy: **98.05**  
+5917 groups in key  
+5997 groups in response  
+5195 correct groups  
+  precision: 86.63  
+  recall:    87.80  
+  F1:        **87.21**  
 
 ## Setup and Libraries
 I use [spaCy](https://spacy.io/) python library to help extracting text features. It support convenient features extraction about text e.g. is_upper, prefix, suffix, shape of the word, is_stop, lemma (the canonical form) of a word etc.
