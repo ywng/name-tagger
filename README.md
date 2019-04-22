@@ -9,37 +9,8 @@ The training model using NLTK MaxentClassifier is essentially feature-based supe
 Below are some of the features I tried of the above 3 main categories.  
 
 ***
-FEAT_EXTRACT_LIST = [
-  "is_title",
-  "orth_",
-  "lemma_",
-  "lower_",
-  "norm_",
-  "shape_",
-  "prefix_",
-  "suffix_",
-  "is_alpha",
-  "is_digit",
-  "is_punct",
-  "like_num",
-  "is_upper",
-  "dep_",
-  "is_stop",
-  "left_edge",
-]
+Without the word embeddings, it produces below results (Assignment 6 baseline).
 
-48254 out of 51578 tags correct  
-  accuracy: 93.56  
-5917 groups in key  
-3905 groups in response  
-3244 correct groups  
-  precision: 83.07    
-  recall:    54.83   
-  F1:        66.06   
-
-In this case, I tried to include as many word characteristics as possible and together with the contextual(-2, +2) combination of them. It gives okay accuracy, but the F1 score is low. This shows that too much unnecessary features may worsen the performance.
-
-***
 FEAT_EXTRACT_LIST = [
   "is_title",
   "orth_",
@@ -51,40 +22,18 @@ FEAT_EXTRACT_LIST = [
   "suffix_",
 ]
 
-49368 out of 51578 tags correct  
-  accuracy: 95.72  
-5917 groups in key  
-4862 groups in response  
-4136 correct groups  
-  precision: 85.07  
-  recall:    69.90   
-  F1:        76.74   
-
-Now, I have less word characteristics features, the performance is however increased.
+50212 out of 51578 tags correct
+accuracy: 97.35
+5917 groups in key
+5729 groups in response
+4870 correct groups
+precision: 85.01
+recall: 82.31
+F1: 83.63
 
 ***
-FEAT_EXTRACT_LIST = [
-  "is_title",
-  "lemma_",
-  "norm_",
-  "shape_",
-  "suffix_",
-  "dep_",
-  "left_edge",
-]
+With naive word embeddings by adding D (where D is the dimensions of the word vector) features to each token, the performance is decreased.
 
-49293 out of 51578 tags correct  
-  accuracy: 95.57  
-5917 groups in key  
-4816 groups in response  
-4100 correct groups  
-  precision: 85.13  
-  recall:    69.29  
-  F1:        76.40  
-
-Switch a little bit to different word characteristics, the performance is more or less the same. Probably, the lemma, shape of the word, and its contextual features play the important role. Some features are just not helpful at all.
-
-***
 FEAT_EXTRACT_LIST = [
   "is_title",
   "orth_",
@@ -94,43 +43,69 @@ FEAT_EXTRACT_LIST = [
   "shape_",
   "prefix_",
   "suffix_",
+  "word_vector_naive",
+]
+
+49961 out of 51578 tags correct
+  accuracy: 96.86
+5917 groups in key
+6432 groups in response
+5039 correct groups
+  precision: 78.34
+  recall:    85.16
+  F1:        81.61
+
+***
+With binarization (convert to discrete valued-features) as described in (Gu et al 2014), the performance is not improved but decreased. It is probably because the trainer is not good at handling these features, and taking each dim of the vector as a feature is too much.
+
+FEAT_EXTRACT_LIST = [
+  "is_title",
+  "orth_",
+  "lemma_",
+  "lower_",
+  "norm_",
+  "shape_",
+  "prefix_",
+  "suffix_",
+  #"word_vector_naive",
+  "binarization",
+]
+
+48609 out of 51578 tags correct
+  accuracy: 94.24
+5917 groups in key
+7485 groups in response
+4804 correct groups
+  precision: 64.18
+  recall:    81.19
+  F1:        71.69
+
+***
+Using word vector clustering, I got the best performance on dev dataset. 
+
+FEAT_EXTRACT_LIST = [
+  "is_title",
+  "orth_",
+  "lemma_",
+  "lower_",
+  "norm_",
+  "shape_",
+  "prefix_",
+  "suffix_",
+  #"word_vector_naive",
+  #"binarization",
   "word_vector_cluster",
 ]
 
-50043 out of 51578 tags correct  
-  accuracy: 97.02  
-5917 groups in key  
-5493 groups in response  
-4717 correct groups  
-  precision: 85.87  
-  recall:    79.72  
-  F1:        82.68  
 
-Then, I also include the word vector clustering group as a feature. Initially, with the same number of epoches of training (9 epoches), I just got slightly, negligibly improvement over the accuracy and F1 score.
-Later on, I realised that the last bit of push for training accuracy (from 99.1 --> 99.8) with more epoches (19 epoches) help with the performance. Now the accuracy and F1 score is much improved.
-
-***
-**FEAT_EXTRACT_LIST = [
-  "is_title",
-  "orth_",
-  "lemma_",
-  "norm_",
-  "shape_",
-  "suffix_",
-  "word_vector_cluster",
-]**
-
-50212 out of 51578 tags correct  
-  **accuracy: 97.35**  
-5917 groups in key  
-5729 groups in response  
-4870 correct groups  
-  precision: 85.01  
-  recall:    82.31  
-  **F1:        83.63**  
-
-Now, I try to change the total number of word vector embbedings group (K = 1024), and further increased the number of epoches (25 epoches), and just take backward 2, forward 1 neighboring word as contextual features, the performance is pushed higher a bit. F1 score increase is not trivial. Probably, the hyper-parameters (K, number of epoches, how many forward and backward neighboring words we consider) are also important.
-
+50570 out of 51578 tags correct
+  accuracy: **98.05**
+5917 groups in key
+5997 groups in response
+5195 correct groups
+  precision: 86.63
+  recall:    87.80
+  F1:        **87.21**
 
 ## Setup and Libraries
 I use [spaCy](https://spacy.io/) python library to help extracting text features. It support convenient features extraction about text e.g. is_upper, prefix, suffix, shape of the word, is_stop, lemma (the canonical form) of a word etc.
@@ -165,24 +140,19 @@ ssh crunchy1.cims.nyu.edu
 
 ### Training
 It will produce a model object in ./model/
-It will take quite long to train up to 25 epoches. The best train model saved in ./model/model_2019-04-03_19-28-43.sav
+It will take quite long to train the classifier. The best train model saved in ./model/model_cluster_wv.sav
 ```
 python max-entropy-name-tagger.py --train --train_data ./data/CONLL_train.pos-chunk-name
 ```
 
 ### Eval
 Running below script will tag the given word sequence. It will evalute and print the accuracy. 
-For my implementation, 
-accuracy: 
-precision: 
-recall: 
-F1: 
 --model: path to the trained model file.   
 --words: the words file to be tagged.   
 --name_tags: the named entity tags ground true.   
 --output: the path where the predicted entity tag result will be output to.  
 ```
-python max-entropy-name-tagger.py --eval --model ./model/model_2019-04-03_19-28-43.sav --words ./data/CONLL_dev.pos-chunk --name_tags ./data/CONLL_dev.name --output ./output/CONLL_dev.predicted_name
+python max-entropy-name-tagger.py --eval --model ./model/model_cluster_wv.sav --words ./data/CONLL_dev.pos-chunk --name_tags ./data/CONLL_dev.name --output ./output/CONLL_dev.predicted_name
 ```
 
 ### Test
@@ -190,5 +160,5 @@ python max-entropy-name-tagger.py --eval --model ./model/model_2019-04-03_19-28-
 --words: the words file to be tagged.  
 --output: the path where the predicted entity tag result will be output to.  
 ```
-python max-entropy-name-tagger.py --test --model ./model/model_2019-04-03_19-28-43.sav --words ./data/CONLL_test.pos-chunk --output ./output/CONLL_test.name
+python max-entropy-name-tagger.py --test --model ./model/model_cluster_wv.sav --words ./data/CONLL_test.pos-chunk --output ./output/CONLL_test.name
 ```

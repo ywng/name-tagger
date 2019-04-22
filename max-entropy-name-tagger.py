@@ -5,19 +5,26 @@ import pandas as pd
 import numpy as np
 import spacy
 from spacy.tokens import Doc
-from nltk.classify.maxent import MaxentClassifier
+#from nltk.classify.maxent import MaxentClassifier
+from sklearn.feature_extraction import DictVectorizer
+from sklearn.linear_model import LogisticRegression
 from gensim.models import Word2Vec
 import nltk
 from nltk.corpus import treebank
 from sklearn.cluster import MiniBatchKMeans
 
 from score import score
-from const import FEAT_EXTRACT_LIST, SENT_START, SENT_END, NEWLINE 
+from const import FEAT_EXTRACT_LIST, SENT_START, SENT_END, NEWLINE
 
 MODEL_SAVE_PATH = "./model/model_%s.sav"
+VECTORIZER_SAVE_PATH = "./data/vectorizer.pickle"
+REGRESSER_MAX_ITER = 2000
+
+nltk.download('treebank')
 
 nlp = spacy.load('en')
-word_vec = Word2Vec(treebank.sents()).wv
+wv_dims = 300
+word_vec = Word2Vec(treebank.sents(), size=wv_dims).wv
 
 K = 1024
 kmeans = MiniBatchKMeans(n_clusters=K, random_state=0).fit(word_vec[word_vec.vocab])
@@ -44,7 +51,7 @@ class FeatureBuilder:
     for token in doc:
       for feat in FEAT_EXTRACT_LIST:
         # No context features for word vector
-        if feat.startswith("word_vector_cluster"):
+        if feat.startswith(("word_vector_cluster", "binarization", "word_vector_naive")):
           continue
 
         # Token -1
@@ -66,10 +73,10 @@ class FeatureBuilder:
             self.features[token.i][feat + "_+1"] = self.features[token.i + 1][feat]
         
         # Token + 2
-        #if (token.i == len(sent) - 2) or (token.i == len(sent) - 1):
-            #self.features[token.i][feat + "_+2"] = SENT_END
-        #else:
-            #self.features[token.i][feat + "_+2"] = self.features[token.i + 2][feat]
+        if (token.i == len(sent) - 2) or (token.i == len(sent) - 1):
+            self.features[token.i][feat + "_+2"] = SENT_END
+        else:
+            self.features[token.i][feat + "_+2"] = self.features[token.i + 2][feat]
 
   def is_alpha(self, token):
       self.features[token.i]["is_alpha"] = token.is_alpha
@@ -110,35 +117,77 @@ class FeatureBuilder:
   def suffix_(self, token):
       self.features[token.i]["suffix_"] = token.suffix_
 
-  def dep_(self, token):
-      self.features[token.i]["dep_"] = token.dep_
+  def word_vector_naive(self, token):
+    if token.lower_ in word_vec.vocab:
+      vec = word_vec[token.lower_]
+    else:
+      vec = [0] * wv_dims
 
-  def head(self, token):
-      self.features[token.i]["head"] = token.head.text
+    for i in range(wv_dims):
+      self.features[token.i]["wv_dim"+str(i)] = vec[i]
 
-  def left_edge(self, token):
-      self.features[token.i]["left_edge"] = token.left_edge.text
-
-  def right_edge(self, token):
-      self.features[token.i]["right_edge"] = token.right_edge.text
+  def binarization(self, token):
+    if token.lower_ in word_vec.vocab:
+      vec = word_vec[token.lower_]
+      pos_mean = vec[vec>0].mean()
+      neg_mean = vec[vec<0].mean()
+    
+      '''
+        U+ is a string feature which turns on when the value (Cij ) falls into 
+        the upper part of the positive list. Similarly, B− refers to the bottom 
+        part of the negative list. The insight behind is that we only consider 
+        the features with strong opinions (i.e., positive or negative) on each 
+        dimension and omit the values close to zero.
+      '''
+      for i in range(wv_dims):
+        if vec[i]>=pos_mean:
+          self.features[token.i]["wv_bin"+str(i)] = "U+"
+        elif vec[i]<=neg_mean:
+          self.features[token.i]["wv_bin"+str(i)] = "B-"
+        else:
+          self.features[token.i]["wv_bin"+str(i)] = "zero"
+    else: 
+      #out of vocabulary,
+      for i in range(wv_dims):
+          self.features[token.i]["wv_bin"+str(i)] = "oov" # oov means not in the vocab
 
   def word_vector_cluster(self, token):
       if token.lower_ in word_vec.vocab:
-        self.features[token.i]["word_vector_cluster"] = kmeans.predict([word_vec[token.lower_]])[0]
+        #make it string to make it discrete feature
+        self.features[token.i]["word_vector_cluster"] = str(kmeans.predict([word_vec[token.lower_]])[0]) 
       else:
-        self.features[token.i]["word_vector_cluster"] = -1 # -1 means not in the vocab
+        self.features[token.i]["word_vector_cluster"] = "oov" # oov means not in the vocab
 
 class MaxEntNameTagger:
 
   def train(self, train_data_path):
     features_df = self.__build_features(train_data_path)
-    labels = features_df['tag'].values.tolist()
-
-    features_df = features_df.drop('tag', 1)
-    features_set = features_df.T.to_dict().values()
+    features = list(features_df)
+    features.remove("tag")
    
-    features_set_labels = list(zip(features_set, labels))
-    self.classifier = MaxentClassifier.train(features_set_labels, max_iter=25)
+    #features_set_labels = list(zip(features_set, labels))
+    #self.classifier = MaxentClassifier.train(features_set_labels, max_iter=NUM_EPOCHES)
+    '''
+      It was too slow to train the classifier using MaxntClassifier without solver algorithm.
+      So, using multinomial LogisticRegression is equivalent to Max-Entrophy classifier.
+    '''
+    vectorizer = DictVectorizer()
+    trainX = vectorizer.fit_transform(features_df[features].to_dict("records"))
+    trainy = features_df["tag"].values
+
+    self.classifier = LogisticRegression(
+        multi_class="multinomial",  # Using cross-entropy loss
+        solver="lbfgs",            
+        C=2.0,                      
+        n_jobs=-1,
+        warm_start=True,
+        verbose=1,
+        max_iter=REGRESSER_MAX_ITER,
+    )
+
+    self.classifier.fit(trainX, trainy)
+    #save the vectorizer for later use
+    pickle.dump(vectorizer, open(VECTORIZER_SAVE_PATH, 'wb'), protocol=2)
 
   def eval(self, word_seq_path, tag_ans_path, output_path):
     self.test(word_seq_path, output_path)
@@ -146,19 +195,19 @@ class MaxEntNameTagger:
 
   def test(self, word_seq_path, output_path):
     features_df = self.__build_features(word_seq_path)
-    features_df = features_df.drop('tag', 1)
-    features_set = list(features_df.T.to_dict().values())
+    features = list(features_df)
+    features.remove("tag")
 
-    tags = []
-    for token_features in features_set:
-      tag = self.classifier.classify(token_features)
-      tags.append(tag)
+    vectorizer = pickle.load(open(VECTORIZER_SAVE_PATH, "rb"))
+
+    X = vectorizer.transform(features_df[features].to_dict("records"))
+    Y_pred = self.classifier.predict(X)
 
     tokens = features_df["token"].values
 
     # Write out the predicted name entity tags
     with open(output_path, "w") as out:
-        for token, tag in zip(tokens, tags):
+        for token, tag in zip(tokens, Y_pred):
             # Handle newlines
             if (token == NEWLINE):
                 out.write("\n")
@@ -207,6 +256,9 @@ class MaxEntNameTagger:
 
       if cnt % 10000 == 0:
         print("#lines of features built: {:>8}".format(cnt))
+
+      #if cnt == 10000:
+      #  break
 
     df = pd.DataFrame(all_features_data_list, columns=columns)
     df.to_csv(src_data_path + "-features", index=False)
